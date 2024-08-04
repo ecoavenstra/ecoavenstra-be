@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getAdminDashboard, deleteArticle, deleteJob, deleteService, getArticleById, getArticles, getJobById, getJobs, getServiceById, getServices, postArticle, postJobs, postService, searchArticlesByTitle, searchJobsByTitle, searchServicesByTitle, updateArticle, updateJob, updateService, } from "../controllers/admin.js";
+import { upload } from "../middleware/multer.js";
 const route = Router();
 route.get("/", 
 // authenticateToken,
@@ -9,7 +10,9 @@ getAdminDashboard);
 route.post("/articles", 
 // authenticateToken,
 // authorizeRole(["ADMIN"]),
-postArticle);
+upload.fields([
+    { name: "coverImage", maxCount: 1 }, // limit to one file per field, the name of the key in req.
+]), postArticle);
 route.get("/articles", 
 // authenticateToken,
 // authorizeRole(["ADMIN"]),

@@ -22,6 +22,7 @@ import {
   updateJob,
   updateService,
 } from "../controllers/admin.js";
+import { upload } from "../middleware/multer.js";
 
 const route = Router();
 
@@ -34,9 +35,14 @@ route.get(
 
 // Article routes
 route.post(
+  
   "/articles",
   // authenticateToken,
   // authorizeRole(["ADMIN"]),
+  upload.fields([
+    { name: "coverImage", maxCount: 1 }, // limit to one file per field, the name of the key in req.
+   
+  ]),
   postArticle
 );
 route.get(

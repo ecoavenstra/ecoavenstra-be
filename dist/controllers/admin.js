@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import uploadOnCloudinary from "../utils/cloudinary.js";
 const prisma = new PrismaClient();
 export const getAdminDashboard = (req, res) => {
     res.send("Admin Dashboard");
@@ -8,6 +9,18 @@ export const postArticle = async (req, res) => {
         const { title, user, category, seoTitle, seoKeyword, shortDescription, description,
         //@ts-ignore
          } = req.body;
+        let coverImageLocalPath;
+        if (
+        //@ts-ignore
+        req.files &&
+            //@ts-ignore
+            Array.isArray(req.files.coverImage) &&
+            //@ts-ignore
+            req.files.coverImage.length > 0) {
+            //@ts-ignore
+            coverImageLocalPath = req.files.coverImage[0].path;
+        }
+        const coverImage = await uploadOnCloudinary(coverImageLocalPath);
         const article = await prisma.article.create({
             data: {
                 title,
@@ -17,11 +30,12 @@ export const postArticle = async (req, res) => {
                 seoKeyword,
                 shortDescription,
                 description,
+                coverImage: coverImage?.secure_url || "",
             },
         });
         return res
             .status(200)
-            .json({ success: true, message: 'Article Created', article });
+            .json({ success: true, message: "Article Created", article });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -155,7 +169,9 @@ export const getServiceById = async (req, res) => {
         if (service) {
             return res.status(200).json({ success: true, service });
         }
-        return res.status(404).json({ success: false, message: "Service not found" });
+        return res
+            .status(404)
+            .json({ success: false, message: "Service not found" });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -176,7 +192,9 @@ export const updateService = async (req, res) => {
                 description,
             },
         });
-        return res.status(200).json({ success: true, message: "Service Updated", service });
+        return res
+            .status(200)
+            .json({ success: true, message: "Service Updated", service });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -203,7 +221,7 @@ export const searchServicesByTitle = async (req, res) => {
             where: {
                 title: {
                     contains: title,
-                    mode: 'insensitive',
+                    mode: "insensitive",
                 },
             },
         });
@@ -232,7 +250,9 @@ export const postJobs = async (req, res) => {
                 openTill,
             },
         });
-        return res.status(200).json({ success: true, message: "Jobs Created", jobs });
+        return res
+            .status(200)
+            .json({ success: true, message: "Jobs Created", jobs });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -243,7 +263,7 @@ export const getJobs = async (req, res) => {
     try {
         const jobs = await prisma.job.findMany();
         // Convert BigInt to string for serialization
-        const serializedJobs = jobs.map(job => ({
+        const serializedJobs = jobs.map((job) => ({
             ...job,
             contactNumber: job.contactNumber.toString(),
         }));
@@ -318,7 +338,7 @@ export const searchJobsByTitle = async (req, res) => {
             where: {
                 jobTitle: {
                     contains: jobTitle,
-                    mode: 'insensitive',
+                    mode: "insensitive",
                 },
             },
         });
@@ -340,7 +360,9 @@ export const postBlog = async (req, res) => {
                 bannerImage,
             },
         });
-        return res.status(200).json({ success: true, message: "Blog Created", blog });
+        return res
+            .status(200)
+            .json({ success: true, message: "Blog Created", blog });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -386,7 +408,9 @@ export const updateBlog = async (req, res) => {
                 bannerImage,
             },
         });
-        return res.status(200).json({ success: true, message: "Blog Updated", blog });
+        return res
+            .status(200)
+            .json({ success: true, message: "Blog Updated", blog });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
