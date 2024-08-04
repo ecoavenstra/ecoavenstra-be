@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "job" ALTER COLUMN "openTill" SET DATA TYPE TEXT;

@@ -57,13 +57,13 @@ model job {
   companyName    String
   jobTitle       String
   salaryRange    String?
-  category       String
-  vacancy        Int
-  jobType        String
+  category       String?
+  vacancy        String?
+  jobType        String?
   jobLocation    String
   jobDescription String
-  contactNumber  Int
-  openTill       DateTime
+  contactNumber  BigInt
+  openTill       String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

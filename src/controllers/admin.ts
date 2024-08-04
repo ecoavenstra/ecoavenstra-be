@@ -9,7 +9,7 @@ export const getAdminDashboard = (req: Request, res: Response) => {
 
 export const postArticle = async (req: Request, res: Response) => {
   try {
-    //@ts-ignore
+    
     const {
       title,
       user,
@@ -20,6 +20,7 @@ export const postArticle = async (req: Request, res: Response) => {
       description,
       //@ts-ignore
     } = req.body;
+
     const article = await prisma.article.create({
       data: {
         title,
@@ -31,9 +32,10 @@ export const postArticle = async (req: Request, res: Response) => {
         description,
       },
     });
+
     return res
       .status(200)
-      .json({ success: true, message: "Article Created", article });
+      .json({ success: true, message: 'Article Created', article });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
   }

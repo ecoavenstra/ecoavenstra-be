@@ -5,7 +5,6 @@ export const getAdminDashboard = (req, res) => {
 };
 export const postArticle = async (req, res) => {
     try {
-        //@ts-ignore
         const { title, user, category, seoTitle, seoKeyword, shortDescription, description,
         //@ts-ignore
          } = req.body;
@@ -22,7 +21,7 @@ export const postArticle = async (req, res) => {
         });
         return res
             .status(200)
-            .json({ success: true, message: "Article Created", article });
+            .json({ success: true, message: 'Article Created', article });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
