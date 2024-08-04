@@ -33,6 +33,8 @@ export const postArticle = async (req: Request, res: Response) => {
       coverImageLocalPath = req.files.coverImage[0].path;
     }
 
+    console.log(coverImageLocalPath)
+
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
     const article = await prisma.article.create({
