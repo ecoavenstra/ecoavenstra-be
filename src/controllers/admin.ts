@@ -277,7 +277,12 @@ export const postJobs = async (req: Request, res: Response) => {
   export const getJobs = async (req: Request, res: Response) => {
     try {
       const jobs = await prisma.job.findMany();
-      return res.status(200).json({ success: true, jobs });
+      // Convert BigInt to string for serialization
+      const serializedJobs = jobs.map(job => ({
+        ...job,
+        contactNumber: job.contactNumber.toString(),
+      }));
+      return res.status(200).json({ success: true, jobs: serializedJobs });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
     }
