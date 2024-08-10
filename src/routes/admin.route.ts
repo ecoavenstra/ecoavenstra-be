@@ -47,14 +47,14 @@ route.post(
 );
 route.get(
   "/articles",
-  // authenticateToken,
-  // authorizeRole(["ADMIN"]),
+  authenticateToken,
+  authorizeRole(["ADMIN"]),
   getArticles
 );
 route.get(
   "/articles/:id",
-  // authenticateToken,
-  // authorizeRole(["ADMIN"]),
+  authenticateToken,
+  authorizeRole(["ADMIN", "USER"]),
   getArticleById
 );
 route.put(
