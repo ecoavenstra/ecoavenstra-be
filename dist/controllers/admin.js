@@ -1,8 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 const prisma = new PrismaClient();
-export const getAdminDashboard = (req, res) => {
-    res.send("Admin Dashboard");
+export const getAdminDashboard = async (req, res) => {
+    try {
+        const totalJobs = await prisma.job.count();
+        const totalService = await prisma.service.count();
+        // const totalEnquiry = await prisma.enquiry.count();
+        return res.status(200).json({
+            success: true,
+            totalJobs,
+            totalService,
+            // totalEnquiry,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
 };
 export const postArticle = async (req, res) => {
     try {
@@ -428,5 +441,110 @@ export const deleteBlog = async (req, res) => {
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
+    }
+};
+export const postEnquiry = async (req, res) => {
+    //@ts-ignore
+    const { name, email, subject, category, contactNumber, status, message } = req.body;
+    if (!name || !status || !message) {
+        return res.status(400).json({ error: 'Name, status, and message are required fields' });
+    }
+    try {
+        //@ts-ignore
+        const newEnquiry = await prisma.enquiry.create({
+            data: {
+                name,
+                email,
+                subject,
+                category,
+                contactNumber,
+                status,
+                message,
+            },
+        });
+        res.status(201).json(newEnquiry);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to create the enquiry' });
+    }
+};
+export const getEnquiries = async (req, res) => {
+    try {
+        //@ts-ignore
+        const enquiries = await prisma.enquiry.findMany();
+        res.json(enquiries);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to fetch enquiries' });
+    }
+};
+// GET enquiry by ID
+export const getEnquiryById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        //@ts-ignore
+        const enquiry = await prisma.enquiry.findUnique({
+            where: { id: Number(id) }
+        });
+        if (enquiry) {
+            res.json(enquiry);
+        }
+        else {
+            res.status(404).json({ error: 'Enquiry not found' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to fetch the enquiry' });
+    }
+};
+// DELETE enquiry by ID
+export const deleteEnquiry = async (req, res) => {
+    const { id } = req.params;
+    try {
+        //@ts-ignore
+        await prisma.enquiry.delete({
+            where: { id: Number(id) }
+        });
+        res.json({ message: 'Enquiry deleted successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to delete the enquiry' });
+    }
+};
+// UPDATE enquiry by ID
+export const updateEnquiryById = async (req, res) => {
+    const { id } = req.params;
+    //@ts-ignore
+    const { name, email, subject, category, contactNumber, status, message } = req.body;
+    try {
+        //@ts-ignore
+        const enquiry = await prisma.enquiry.update({
+            where: { id: Number(id) },
+            data: { name, email, subject, category, contactNumber, status, message }
+        });
+        res.json(enquiry);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to update the enquiry' });
+    }
+};
+// UPDATE enquiry status to pending, cancel, or resolve
+export const updateEnquiryStatus = async (req, res) => {
+    const { id } = req.params;
+    //@ts-ignore
+    const { status } = req.body;
+    if (!['pending', 'cancel', 'resolve'].includes(status)) {
+        return res.status(400).json({ error: 'Invalid status value' });
+    }
+    try {
+        //@ts-ignore
+        const enquiry = await prisma.enquiry.update({
+            where: { id: Number(id) },
+            data: { status }
+        });
+        res.json(enquiry);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to update the status' });
     }
 };

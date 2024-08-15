@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAdminDashboard, deleteArticle, deleteJob, deleteService, getArticleById, getArticles, getJobById, getJobs, getServiceById, getServices, postArticle, postJobs, postService, searchArticlesByTitle, searchJobsByTitle, searchServicesByTitle, updateArticle, updateJob, updateService, } from "../controllers/admin.js";
+import { getAdminDashboard, deleteArticle, deleteJob, deleteService, getArticleById, getArticles, getJobById, getJobs, getServiceById, getServices, postArticle, postJobs, postService, searchArticlesByTitle, searchJobsByTitle, searchServicesByTitle, updateArticle, updateJob, updateService, deleteEnquiry, postEnquiry, getEnquiries, getEnquiryById, updateEnquiryById, updateEnquiryStatus } from "../controllers/admin.js";
 import { upload } from "../middleware/multer.js";
 const route = Router();
 route.get("/", 
@@ -19,7 +19,7 @@ route.get("/articles",
 getArticles);
 route.get("/articles/:id", 
 // authenticateToken,
-// authorizeRole(["ADMIN"]),
+// authorizeRole(["ADMIN", "USER"]),
 getArticleById);
 route.put("/articles/:id", 
 // authenticateToken,
@@ -83,4 +83,10 @@ route.get("/jobs/search",
 // authenticateToken,
 // authorizeRole(["ADMIN"]),
 searchJobsByTitle);
+route.post("/enquiries", postEnquiry);
+route.get("/enquiries", getEnquiries);
+route.get("/enquiries/:id", getEnquiryById);
+route.put("/enquiries/:id", updateEnquiryById);
+route.put("/enquiries/:id", updateEnquiryStatus);
+route.delete("/enquiries/:id", deleteEnquiry);
 export default route;

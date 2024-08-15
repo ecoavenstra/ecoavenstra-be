@@ -1,22 +1,17 @@
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
-import cors from 'cors'
+import cors from "cors";
 
 const port = process.env.PORT || 9999;
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(cookieParser());
 //@ts-ignore
 app.use(express.json());
 app.get("/", async (req: Request, res: Response) => {
   res.send("Server is working great!");
 });
-
-
-
-
-
 
 import User from "./routes/user.route.js";
 import { authenticateToken, authorizeRole } from "./middleware/middleware.js";

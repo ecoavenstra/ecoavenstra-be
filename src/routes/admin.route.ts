@@ -21,6 +21,15 @@ import {
   updateArticle,
   updateJob,
   updateService,
+  deleteBlog,
+  deleteEnquiry,
+  getBlogById,
+  postEnquiry,
+  getEnquiries,
+  getEnquiryById,
+  updateEnquiryById,
+  updateEnquiryStatus
+
 } from "../controllers/admin.js";
 import { upload } from "../middleware/multer.js";
 
@@ -35,13 +44,11 @@ route.get(
 
 // Article routes
 route.post(
-  
   "/articles",
   // authenticateToken,
   // authorizeRole(["ADMIN"]),
   upload.fields([
     { name: "coverImage", maxCount: 1 }, // limit to one file per field, the name of the key in req.
-   
   ]),
   postArticle
 );
@@ -151,5 +158,19 @@ route.get(
   // authorizeRole(["ADMIN"]),
   searchJobsByTitle
 );
+
+route.post("/enquiries", postEnquiry);
+
+route.get("/enquiries", getEnquiries);
+
+route.get("/enquiries/:id", getEnquiryById);
+
+route.put("/enquiries/:id", updateEnquiryById);
+
+route.put("/enquiries/:id", updateEnquiryStatus);
+
+route.delete("/enquiries/:id", deleteEnquiry);
+
+
 
 export default route;
