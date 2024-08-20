@@ -63,7 +63,7 @@ model job {
   jobType        String?
   jobLocation    String
   jobDescription String
-  contactNumber  BigInt
+  contactNumber  String?
   openTill       String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

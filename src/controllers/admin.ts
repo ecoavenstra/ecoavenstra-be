@@ -310,32 +310,33 @@ export const postJobs = async (req: Request, res: Response) => {
 export const getJobs = async (req: Request, res: Response) => {
   try {
     const jobs = await prisma.job.findMany();
-    // Convert BigInt to string for serialization
-    const serializedJobs = jobs.map((job) => ({
-      ...job,
-      contactNumber: job.contactNumber.toString(),
-    }));
-    return res.status(200).json({ success: true, jobs: serializedJobs });
+    return res.status(200).json({ success: true, jobs });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+
 // Read a single job by ID
 export const getJobById = async (req: Request, res: Response) => {
   const { id } = req.params;
+
   try {
     const job = await prisma.job.findUnique({
       where: { id: Number(id) },
     });
+
     if (job) {
       return res.status(200).json({ success: true, job });
     }
     return res.status(404).json({ success: false, message: "Job not found" });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 // Update a job by ID
 export const updateJob = async (req: Request, res: Response) => {
