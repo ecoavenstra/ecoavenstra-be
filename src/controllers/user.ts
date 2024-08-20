@@ -75,14 +75,14 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid password" });
     }
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, name : user.name ,email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
     
     res.cookie("token", token, { httpOnly: true });
 
-    return res.status(200).json({ message: "Login successful", token });
+    return res.status(200).json({ message: "Login successful", token, user });
   } catch (error: any) {
     console.error(error);
     return res
