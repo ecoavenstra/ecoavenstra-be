@@ -494,7 +494,7 @@ export const deleteBlog = async (req: Request, res: Response) => {
 
 export const postEnquiry = async ( req : Request, res : Response,)=>{
   //@ts-ignore
-  const { name, email, subject, category, contactNumber, status, message } = req.body;
+  const { name, email, subject, category,organization ,contactNumber, status, message } = req.body;
   if (!name || !status || !message) {
     return res.status(400).json({ error: 'Name, status, and message are required fields' });
 }
@@ -509,6 +509,7 @@ export const postEnquiry = async ( req : Request, res : Response,)=>{
               contactNumber,
               status,
               message,
+              organization
           },
       });
       res.status(201).json(newEnquiry);
