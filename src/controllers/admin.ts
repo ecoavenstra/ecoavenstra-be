@@ -7,14 +7,22 @@ export const getAdminDashboard = async (req: Request, res: Response) => {
   try {
     const totalJobs = await prisma.job.count();
     const totalService = await prisma.service.count();
-    
-    // const totalEnquiry = await prisma.enquiry.count();
+    const totalEnquiry = await prisma.enquiry.count();
+    const pendingEnquiriesList = await prisma.enquiry.findMany({
+      where: {
+        status: 'pending',
+      },
+    });
+    const pendingEnquiries = pendingEnquiriesList.length;
 
     return res.status(200).json({
       success: true,
       totalJobs,
       totalService,
-      // totalEnquiry,
+      totalEnquiry,
+      pendingEnquiries,
+      pendingEnquiriesList
+
     });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
@@ -68,6 +76,7 @@ export const postArticle = async (req: Request, res: Response) => {
       .status(200)
       .json({ success: true, message: "Article Created", article });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -592,7 +601,7 @@ export const updateEnquiryStatus =  async (req: Request, res: Response) => {
 
   const { status } = req.body;
 
-  if (!['pending', 'cancel', 'resolve'].includes(status)) {
+  if (!['pending', 'resolve'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status value' });
   }
 

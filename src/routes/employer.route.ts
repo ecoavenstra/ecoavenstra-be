@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { authenticateToken, authorizeRole } from "../middleware/middleware.js";
-import { getEmployerDashboard } from "../controllers/employer.js";
+import { getEmployerDashboard, employerEnquiry } from "../controllers/employer.js";
 
 const route = Router();
 
-route.get(
-    "/",
-    authenticateToken,
-    authorizeRole(["EMPLOYER"]),
-    getEmployerDashboard
+route.post(
+    "/recruit",
+    // authenticateToken,
+    // authorizeRole(["EMPLOYER"]),
+    employerEnquiry
   );
   
 export default route;
