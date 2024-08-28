@@ -117,7 +117,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
       to: mail,
-      subject: "Forget Password EcoValley",
+      subject: "Forget Password Ecoavenstra",
       text: `Your OTP is ${genOtp}. Please verify it within a minute or it will be reset!`,
     };
 
