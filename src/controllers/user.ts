@@ -74,11 +74,11 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid password" });
     }
     const token = jwt.sign(
-      { id: user.id, name : user.name ,email: user.email, role: user.role },
+      { id: user.id, name: user.name, email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
-    
+
     res.cookie("token", token, { httpOnly: true });
 
     return res.status(200).json({ message: "Login successful", token, user });
@@ -90,14 +90,13 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 export const logout = (req: Request, res: Response) => {
-    res.clearCookie("token");
-    return res.status(200).json({ message: "Logout successful" });
-}
+  res.clearCookie("token");
+  return res.status(200).json({ message: "Logout successful" });
+};
 
 export const getUserDashboard = (req: Request, res: Response) => {
-    res.send("User Dashboard");
-}
-
+  res.send("User Dashboard");
+};
 
 const otpStore: { [key: string]: { otp: number; expiresAt: number } } = {};
 
@@ -147,14 +146,18 @@ export const verifyOtp = (req: Request, res: Response) => {
     const storedOtpData = otpStore[mail];
 
     if (!storedOtpData) {
-      return res.status(400).json({ success: false, message: "OTP not found." });
+      return res
+        .status(400)
+        .json({ success: false, message: "OTP not found." });
     }
 
     const { otp: storedOtp, expiresAt } = storedOtpData;
 
     if (Date.now() > expiresAt) {
       delete otpStore[mail];
-      return res.status(400).json({ success: false, message: "OTP has expired." });
+      return res
+        .status(400)
+        .json({ success: false, message: "OTP has expired." });
     }
 
     if (parseInt(otp) !== storedOtp) {
@@ -163,9 +166,39 @@ export const verifyOtp = (req: Request, res: Response) => {
 
     // OTP is valid
     delete otpStore[mail];
-    res.status(200).json({ success: true, message: "OTP verified successfully." });
+    res
+      .status(200)
+      .json({ success: true, message: "OTP verified successfully." });
   } catch (error: any) {
     console.error("Error:", error);
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    //@ts-ignore
+    const { email, newPassword, confirmPassword } = req.body;
+    if (!newPassword) {
+      return res.status(400).json({ message: "New password is required" });
+    }
+    if (!confirmPassword) {
+      return res.status(400).json({ message: "Confirm password is required" });
+    }
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+    const user = await prisma.user.findFirst({ where: { email } });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword },
+    });
+    return res.status(200).json({ message: "Password changed successfully" });
+  } catch (error: any) {
+    return res.status(500).json({ error: error?.message });
   }
 };

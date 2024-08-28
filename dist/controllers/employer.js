@@ -5,21 +5,70 @@ export const getEmployerDashboard = (req, res) => {
 export const employerEnquiry = async (req, res) => {
     try {
         //@ts-ignore
-        const { name, contactNumber, designation, email, city } = req.body;
+        const { name, contactNumber, companyOrConsultant, companyName, numberOfEmployees, designation, email, city } = req.body;
         const mailOptions = {
             from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
             to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
             subject: "Employer Enquiry",
-            text: `
-        You have received a new employer enquiry with the following details:
-
-        Name: ${name}
-        Contact Number: ${contactNumber}
-        Designation: ${designation}
-        Email: ${email}
-        City: ${city}
-
-        Please follow up accordingly.
+            html: `
+        <html>
+        <head>
+          <style>
+            .email-container {
+              font-family: Arial, sans-serif;
+              color: #333;
+              line-height: 1.5;
+            }
+            .email-header {
+              background-color: #007bff;
+              color: #ffffff;
+              padding: 10px;
+              text-align: center;
+              font-size: 20px;
+            }
+            .email-body {
+              padding: 20px;
+            }
+            .email-body h4 {
+              margin-bottom: 5px;
+            }
+            .email-footer {
+              margin-top: 20px;
+              text-align: center;
+              font-size: 12px;
+              color: #777;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="email-container">
+            <div class="email-header">
+              Employer Enquiry Details
+            </div>
+            <div class="email-body">
+              <h4>Name:</h4>
+              <span>${name}</span>
+              <h4>Contact Number:</h4>
+              <span>${contactNumber}</span>
+              <h4>Type:</h4>
+              <span>${companyOrConsultant}</span>
+              <h4>Company/Consultancy Name:</h4>
+              <span>${companyName}</span>
+              <h4>No. of Employees:</h4>
+              <span>${numberOfEmployees}</span>
+              <h4>Designation:</h4>
+              <span>${designation}</span>
+              <h4>Email:</h4>
+              <span>${email}</span>
+              <h4>City:</h4>
+              <span>${city}</span>
+            </div>
+            <div class="email-footer">
+              Please follow up accordingly.
+            </div>
+          </div>
+        </body>
+        </html>
       `,
         };
         // Send the email
