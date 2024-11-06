@@ -42,7 +42,7 @@ export const employerEnquiry = async (req: Request, res: Response) => {
 
     const mailOptions = {
       from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-      to: process.env.EMAIL_FROM || "info@ecoavenstra.com",
+      to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
       subject: "New Job Enquiry",
       html: `
         <html>
@@ -123,6 +123,41 @@ export const employerEnquiry = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error?.message || "An error occurred while processing the enquiry.",
+    });
+  }
+};
+
+
+export const updateJobApprovalStatus = async (req: Request, res: Response) => {
+  const jobId = parseInt(req.params.jobId, 10); // Convert jobId to an integer
+  //@ts-ignore
+  const { isApproved } = req.body; // Expecting a boolean value for isApproved in the request body
+
+  if (isNaN(jobId)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid jobId provided. Must be a number.",
+    });
+  }
+
+  try {
+    // Update the isApproved field of the specified job
+    const updatedJob = await prisma.job.update({
+      where: { id: jobId },
+      //@ts-ignore
+      data: { isApproved },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Job approval status updated successfully to ${isApproved}`,
+      job: updatedJob,
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error?.message || "An error occurred while updating the job approval status.",
     });
   }
 };

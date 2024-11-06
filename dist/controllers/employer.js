@@ -1,15 +1,33 @@
 import { transporter } from "../utils/mailTransport.js";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 export const getEmployerDashboard = (req, res) => {
     res.send("Employer Dashboard");
 };
 export const employerEnquiry = async (req, res) => {
     try {
+        const { companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill,
         //@ts-ignore
-        const { name, contactNumber, companyOrConsultant, companyName, numberOfEmployees, designation, email, city } = req.body;
+         } = req.body;
+        // Store job details in the database
+        const job = await prisma.job.create({
+            data: {
+                companyName,
+                jobTitle,
+                salaryRange,
+                category,
+                vacancy,
+                jobType,
+                jobLocation,
+                jobDescription,
+                contactNumber,
+                openTill,
+            },
+        });
         const mailOptions = {
             from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-            to: process.env.EMAIL_FROM || "info@ecoavenstra.com",
-            subject: "Employer Enquiry",
+            to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+            subject: "New Job Enquiry",
             html: `
         <html>
         <head>
@@ -43,25 +61,29 @@ export const employerEnquiry = async (req, res) => {
         <body>
           <div class="email-container">
             <div class="email-header">
-              Employer Enquiry Details
+              New Job Enquiry Details
             </div>
             <div class="email-body">
-              <h4>Name:</h4>
-              <span>${name}</span>
-              <h4>Contact Number:</h4>
-              <span>${contactNumber}</span>
-              <h4>Type:</h4>
-              <span>${companyOrConsultant}</span>
-              <h4>Company/Consultancy Name:</h4>
+              <h4>Company Name:</h4>
               <span>${companyName}</span>
-              <h4>No. of Employees:</h4>
-              <span>${numberOfEmployees}</span>
-              <h4>Designation:</h4>
-              <span>${designation}</span>
-              <h4>Email:</h4>
-              <span>${email}</span>
-              <h4>City:</h4>
-              <span>${city}</span>
+              <h4>Job Title:</h4>
+              <span>${jobTitle}</span>
+              <h4>Salary Range:</h4>
+              <span>${salaryRange || "Not specified"}</span>
+              <h4>Category:</h4>
+              <span>${category || "Not specified"}</span>
+              <h4>Vacancy:</h4>
+              <span>${vacancy || "Not specified"}</span>
+              <h4>Job Type:</h4>
+              <span>${jobType || "Not specified"}</span>
+              <h4>Job Location:</h4>
+              <span>${jobLocation}</span>
+              <h4>Job Description:</h4>
+              <span>${jobDescription}</span>
+              <h4>Contact Number:</h4>
+              <span>${contactNumber || "Not specified"}</span>
+              <h4>Open Till:</h4>
+              <span>${openTill}</span>
             </div>
             <div class="email-footer">
               Please follow up accordingly.
@@ -75,14 +97,46 @@ export const employerEnquiry = async (req, res) => {
         await transporter.sendMail(mailOptions);
         res.status(200).json({
             success: true,
-            message: "Enquiry sent successfully",
+            job,
+            message: "Enquiry saved and email sent successfully",
         });
     }
     catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: error?.message || "An error occurred while sending the enquiry.",
+            message: error?.message || "An error occurred while processing the enquiry.",
+        });
+    }
+};
+export const updateJobApprovalStatus = async (req, res) => {
+    const jobId = parseInt(req.params.jobId, 10); // Convert jobId to an integer
+    //@ts-ignore
+    const { isApproved, } = req.body; // Expecting a boolean value for isApproved in the request body
+    if (isNaN(jobId)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid jobId provided. Must be a number.",
+        });
+    }
+    try {
+        // Update the isApproved field of the specified job
+        const updatedJob = await prisma.job.update({
+            where: { id: jobId },
+            //@ts-ignore
+            data: { isApproved },
+        });
+        res.status(200).json({
+            success: true,
+            message: `Job approval status updated successfully to ${isApproved}`,
+            job: updatedJob,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: error?.message || "An error occurred while updating the job approval status.",
         });
     }
 };

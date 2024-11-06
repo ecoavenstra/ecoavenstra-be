@@ -271,11 +271,11 @@ export const postJobs = async (req, res) => {
                 jobDescription,
                 contactNumber,
                 openTill,
+                //@ts-ignore
+                isApproved: true, // Set isApproved to true
             },
         });
-        return res
-            .status(200)
-            .json({ success: true, message: "Jobs Created", jobs });
+        return res.status(200).json({ success: true, message: "Job Created", jobs });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -284,7 +284,12 @@ export const postJobs = async (req, res) => {
 // Read all jobs
 export const getJobs = async (req, res) => {
     try {
-        const jobs = await prisma.job.findMany();
+        const jobs = await prisma.job.findMany({
+            where: {
+                //@ts-ignore
+                isApproved: true, // Only fetch jobs where isApproved is true
+            },
+        });
         return res.status(200).json({ success: true, jobs });
     }
     catch (error) {
