@@ -370,6 +370,7 @@ export const updateJob = async (req: Request, res: Response) => {
     jobDescription,
     contactNumber,
     openTill,
+    isApproved
     //@ts-ignore
   } = req.body;
   try {
@@ -386,6 +387,8 @@ export const updateJob = async (req: Request, res: Response) => {
         jobDescription,
         contactNumber,
         openTill,
+        //@ts-ignore
+        isApproved
       },
     });
     return res.status(200).json({ success: true, message: "Job Updated", job });
