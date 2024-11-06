@@ -8,7 +8,7 @@ export const employerEnquiry = async (req, res) => {
         const { name, contactNumber, companyOrConsultant, companyName, numberOfEmployees, designation, email, city } = req.body;
         const mailOptions = {
             from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-            to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+            to: process.env.EMAIL_FROM || "info@ecoavenstra.com",
             subject: "Employer Enquiry",
             html: `
         <html>
