@@ -328,12 +328,7 @@ export const postJobs = async (req: Request, res: Response) => {
 // Read all jobs
 export const getJobs = async (req: Request, res: Response) => {
   try {
-    const jobs = await prisma.job.findMany({
-      where: {
-        //@ts-ignore
-        isApproved: true, // Only fetch jobs where isApproved is true
-      },
-    });
+    const jobs = await prisma.job.findMany();
     return res.status(200).json({ success: true, jobs });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
