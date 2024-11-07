@@ -6,12 +6,16 @@ export const getEmployerDashboard = (req, res) => {
 };
 export const employerEnquiry = async (req, res) => {
     try {
-        const { companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill,
+        const { name, email, companyType, companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill,
         //@ts-ignore
          } = req.body;
         // Store job details in the database
         const job = await prisma.job.create({
             data: {
+                //@ts-ignore
+                name,
+                email,
+                companyType,
                 companyName,
                 jobTitle,
                 salaryRange,
@@ -112,7 +116,7 @@ export const employerEnquiry = async (req, res) => {
 export const updateJobApprovalStatus = async (req, res) => {
     const jobId = parseInt(req.params.jobId, 10); // Convert jobId to an integer
     //@ts-ignore
-    const { isApproved, } = req.body; // Expecting a boolean value for isApproved in the request body
+    const { isApproved } = req.body; // Expecting a boolean value for isApproved in the request body
     if (isNaN(jobId)) {
         return res.status(400).json({
             success: false,
@@ -136,7 +140,8 @@ export const updateJobApprovalStatus = async (req, res) => {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: error?.message || "An error occurred while updating the job approval status.",
+            message: error?.message ||
+                "An error occurred while updating the job approval status.",
         });
     }
 };

@@ -281,6 +281,9 @@ export const searchServicesByTitle = async (req: Request, res: Response) => {
 export const postJobs = async (req: Request, res: Response) => {
   try {
     const {
+      name,
+      email,
+      companyType,
       companyName,
       jobTitle,
       salaryRange,
@@ -296,6 +299,10 @@ export const postJobs = async (req: Request, res: Response) => {
 
     const jobs = await prisma.job.create({
       data: {
+        //@ts-ignore
+        name,
+        email,
+        companyType,
         companyName,
         jobTitle,
         salaryRange,
@@ -360,6 +367,9 @@ export const getJobById = async (req: Request, res: Response) => {
 export const updateJob = async (req: Request, res: Response) => {
   const { id } = req.params;
   const {
+    name,
+    email,
+    companyType,
     companyName,
     jobTitle,
     salaryRange,
@@ -377,6 +387,10 @@ export const updateJob = async (req: Request, res: Response) => {
     const job = await prisma.job.update({
       where: { id: Number(id) },
       data: {
+        //@ts-ignore
+        name,
+        email,
+        companyType,
         companyName,
         jobTitle,
         salaryRange,

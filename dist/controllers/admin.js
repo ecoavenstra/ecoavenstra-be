@@ -256,11 +256,15 @@ export const searchServicesByTitle = async (req, res) => {
 };
 export const postJobs = async (req, res) => {
     try {
-        const { companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill,
+        const { name, email, companyType, companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill,
         //@ts-ignore
          } = req.body;
         const jobs = await prisma.job.create({
             data: {
+                //@ts-ignore
+                name,
+                email,
+                companyType,
                 companyName,
                 jobTitle,
                 salaryRange,
@@ -316,13 +320,17 @@ export const getJobById = async (req, res) => {
 // Update a job by ID
 export const updateJob = async (req, res) => {
     const { id } = req.params;
-    const { companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill,
+    const { name, email, companyType, companyName, jobTitle, salaryRange, category, vacancy, jobType, jobLocation, jobDescription, contactNumber, openTill, isApproved
     //@ts-ignore
      } = req.body;
     try {
         const job = await prisma.job.update({
             where: { id: Number(id) },
             data: {
+                //@ts-ignore
+                name,
+                email,
+                companyType,
                 companyName,
                 jobTitle,
                 salaryRange,
@@ -333,6 +341,8 @@ export const updateJob = async (req, res) => {
                 jobDescription,
                 contactNumber,
                 openTill,
+                //@ts-ignore
+                isApproved
             },
         });
         return res.status(200).json({ success: true, message: "Job Updated", job });

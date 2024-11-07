@@ -4,13 +4,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getEmployerDashboard = (req: Request, res: Response) => {
-    res.send("Employer Dashboard");
-}
-
+  res.send("Employer Dashboard");
+};
 
 export const employerEnquiry = async (req: Request, res: Response) => {
   try {
     const {
+      name,
+      email,
+      companyType,
       companyName,
       jobTitle,
       salaryRange,
@@ -27,6 +29,10 @@ export const employerEnquiry = async (req: Request, res: Response) => {
     // Store job details in the database
     const job = await prisma.job.create({
       data: {
+        //@ts-ignore
+        name,
+        email,
+        companyType,
         companyName,
         jobTitle,
         salaryRange,
@@ -122,11 +128,11 @@ export const employerEnquiry = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: error?.message || "An error occurred while processing the enquiry.",
+      message:
+        error?.message || "An error occurred while processing the enquiry.",
     });
   }
 };
-
 
 export const updateJobApprovalStatus = async (req: Request, res: Response) => {
   const jobId = parseInt(req.params.jobId, 10); // Convert jobId to an integer
@@ -157,7 +163,9 @@ export const updateJobApprovalStatus = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: error?.message || "An error occurred while updating the job approval status.",
+      message:
+        error?.message ||
+        "An error occurred while updating the job approval status.",
     });
   }
 };
