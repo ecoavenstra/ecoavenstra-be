@@ -1,5 +1,6 @@
 import { transporter } from "../utils/mailTransport.js";
 import { PrismaClient } from "@prisma/client";
+import uploadOnCloudinary from "../utils/cloudinary.js";
 const prisma = new PrismaClient();
 export const getEmployerDashboard = (req, res) => {
     res.send("Employer Dashboard");
@@ -143,5 +144,98 @@ export const updateJobApprovalStatus = async (req, res) => {
             message: error?.message ||
                 "An error occurred while updating the job approval status.",
         });
+    }
+};
+export const ApplyJobs = async (req, res) => {
+    try {
+        //@ts-ignore
+        const { name, email, phoneNumber, skills, experience, jobId } = req.body;
+        let resumeLocalPath;
+        if (
+        //@ts-ignore
+        req.files &&
+            //@ts-ignore
+            Array.isArray(req.files.resume) &&
+            //@ts-ignore
+            req.files.resume.length > 0) {
+            //@ts-ignore
+            resumeLocalPath = req.files.resume[0].path;
+        }
+        const resume = await uploadOnCloudinary(resumeLocalPath);
+        // Save job application details to the database
+        // const application = await prisma.jobApplication.create({
+        //   data: {
+        //     name,
+        //     email,
+        //     phoneNumber,
+        //     skills,
+        //     experience,
+        //     resumeUrl: resume?.secure_url || "",
+        //   },
+        // });
+        // Configure email transport
+        // Email content
+        const mailOptions = {
+            from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+            to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+            subject: "New Job Application",
+            html: `
+        <html>
+        <head>
+          <style>
+            .email-container {
+              font-family: Arial, sans-serif;
+              color: #333;
+              line-height: 1.5;
+            }
+            .email-header {
+              background-color: #007bff;
+              color: #ffffff;
+              padding: 10px;
+              text-align: center;
+              font-size: 20px;
+            }
+            .email-body {
+              padding: 20px;
+            }
+            .email-body h4 {
+              margin-bottom: 5px;
+            }
+            .email-footer {
+              margin-top: 20px;
+              text-align: center;
+              font-size: 12px;
+              color: #777;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="email-container">
+            <div class="email-header">New Job Application Details</div>
+            <div class="email-body">
+              <h4>Name:</h4> <span>${name}</span>
+              <h4>Email:</h4> <span>${email}</span>
+              <h4>Phone Number:</h4> <span>${phoneNumber}</span>
+              <h4>Skills:</h4> <span>${skills}</span>
+              <h4>Experience:</h4> <span>${experience || "Not specified"}</span>
+              <h4>Resume URL:</h4> <span>${resume?.secure_url || "Not available"}</span>
+              <h4>Resume URL:</h4> <span>${jobId}</span>
+            </div>
+            <div class="email-footer">Please follow up accordingly.</div>
+          </div>
+        </body>
+        </html>
+      `,
+        };
+        // Send the email
+        await transporter.sendMail(mailOptions);
+        return res.status(200).json({
+            success: true,
+            message: "Job application submitted successfully",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: error.message });
     }
 };
