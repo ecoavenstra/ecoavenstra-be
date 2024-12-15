@@ -48,8 +48,8 @@ export const employerEnquiry = async (req: Request, res: Response) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-      to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+      from: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
+      to: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
       subject: "New Job Enquiry",
       html: `
         <html>
@@ -209,8 +209,8 @@ export const ApplyJobs =async (req: Request, res: Response) => {
 
     // Email content
     const mailOptions = {
-      from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-      to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+      from: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
+      to: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
       subject: "New Job Application",
       html: `
         <html>
@@ -252,7 +252,7 @@ export const ApplyJobs =async (req: Request, res: Response) => {
               <h4>Skills:</h4> <span>${skills}</span>
               <h4>Experience:</h4> <span>${experience || "Not specified"}</span>
               <h4>Resume URL:</h4> <span>${resume?.secure_url || "Not available"}</span>
-              <h4>Resume URL:</h4> <span>${jobId}</span>
+              <h4>Job Id:</h4> <span>${jobId}</span>
             </div>
             <div class="email-footer">Please follow up accordingly.</div>
           </div>

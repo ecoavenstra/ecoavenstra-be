@@ -30,8 +30,8 @@ export const employerEnquiry = async (req, res) => {
             },
         });
         const mailOptions = {
-            from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-            to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+            from: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
+            to: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
             subject: "New Job Enquiry",
             html: `
         <html>
@@ -176,8 +176,8 @@ export const ApplyJobs = async (req, res) => {
         // Configure email transport
         // Email content
         const mailOptions = {
-            from: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
-            to: process.env.EMAIL_FROM || "axxatagrawal@gmail.com",
+            from: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
+            to: process.env.EMAIL_FROM || "ecoavenstrainfo@gmail.com",
             subject: "New Job Application",
             html: `
         <html>
